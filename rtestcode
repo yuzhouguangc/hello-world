@@ -21,3 +21,4 @@ for(i in 51:100){
   bootstrap_density_CIs_poly_2_3x3000_150_part2[,i-50] <- quantile(boot_density_vector, c(lower_bound, upper_bound))
 }
 save(bootstrap_density_CIs_poly_2_3x3000_150_part2,file = "bootstrap_density_CIs_polyx150x100x3000x_part2.Rdata")
+ssssssssssssssssssssssssll
