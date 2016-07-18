@@ -1,0 +1,22 @@
+library(SparkR)
+library(igraph)
+library(snowboot)
+load("/gwork/yzchen/mosaic_spark/poly_2_3_3000/polylog(2,3)100x3000.RData")
+lower_bound <- 0.025
+upper_bound <- 0.975
+bootstrap_density_CIs_poly_2_3x3000_150_part2 <- matrix(NA, nrow = 2, ncol = 50)
+n.boot=500  
+boot_density_vector<-vector(length = n.boot)
+for(i in 51:100){
+  graph <- igraph::graph_from_edgelist(networks[[i]]$edges, directed = F)
+  remove_nodes<-base::sample(1:3000,size=150,replace = FALSE)
+  igraph::V(graph)$name<-igraph::V(graph)
+  new_graph<-igraph::delete_vertices(graph,remove_nodes)
+  m1<- as.matrix(igraph::as_adjacency_matrix(new_graph))
+  bootlist <- snowboot::vertboot(m1, n.boot)
+  for(j in 1:n.boot){
+    boot_density_vector[j] <- igraph::graph.density(igraph::graph_from_adjacency_matrix(bootlist[[j]]))
+  }
+  bootstrap_density_CIs_poly_2_3x3000_150_part2[,i-50] <- quantile(boot_density_vector, c(lower_bound, upper_bound))
+}
+save(bootstrap_density_CIs_poly_2_3x3000_150_part2,file = "bootstrap_density_CIs_polyx150x100x3000x_part2.Rdata")
